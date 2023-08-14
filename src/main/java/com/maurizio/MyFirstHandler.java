@@ -4,11 +4,10 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import java.sql.*;
 import java.util.Map;
 
 
-public class Handler implements RequestHandler<Map<String, String>, Void> {
+public class MyFirstHandler implements RequestHandler<Map<String, String>, Void> {
 
     @Override
     public Void handleRequest(Map<String, String> event, Context context) {
