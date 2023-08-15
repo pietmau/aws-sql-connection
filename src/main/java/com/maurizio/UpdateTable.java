@@ -6,11 +6,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-public class CreateTable implements RequestHandler<Map<String, String>, Void> {
+public class UpdateTable implements RequestHandler<Map<String, String>, Void> {
     private String dbName = System.getenv("RDS_DB_NAME");
     private String userName = System.getenv("RDS_USERNAME");
     private String password = System.getenv("RDS_PASSWORD");
@@ -24,16 +23,15 @@ public class CreateTable implements RequestHandler<Map<String, String>, Void> {
         try {
             Connection conn = DriverManager.getConnection(jdbcUrl, userName, password);
             Statement stmt = conn.createStatement();
-            logger.log("Connected");
             logger.log("Connections successful");
-            String createTable = "CREATE TABLE PETS("
-                    + "Id INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "PetName VARCHAR (20) NOT NULL, "
-                    + "OwnerName VARCHAR (20) NOT NULL, "
-                    + "Species VARCHAR (20) NOT NULL, "
-                    + "Age INT)";
+            String createTable = "INSERT INTO TABLE PETS("
+                    + "PetName, "
+                    + "OwnerName, "
+                    + "Species, "
+                    + "Age"
+                    +"VALUES('Travis','Maurizio,'Cockatiel',3)";
             stmt.executeUpdate(createTable);
-            logger.log("table created");
+            logger.log("table updated");
         } catch (Exception e) {
             logger.log("ERROR! " + e.getMessage());
         }
