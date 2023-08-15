@@ -25,7 +25,7 @@ public class QueryTable implements RequestHandler<Map<String, String>, Void> {
             Connection conn = DriverManager.getConnection(jdbcUrl, userName, password);
             Statement stmt = conn.createStatement();
             logger.log("Connections successful");
-            String query = "SELECT"
+            String query = "SELECT "
                     + "PetName, "
                     + "OwnerName, "
                     + "Species, "
