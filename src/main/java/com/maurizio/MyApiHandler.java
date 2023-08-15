@@ -7,14 +7,14 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import java.util.Map;
 
 
-public class MyFirstHandler implements RequestHandler<Map<String, String>, Void> {
+public class MyApiHandler implements RequestHandler<Map<String, String>, Integer> {
 
     @Override
-    public Void handleRequest(Map<String, String> event, Context context) {
+    public Integer handleRequest(Map<String, String> event, Context context) {
         LambdaLogger logger = context.getLogger();
         for (Map.Entry<String, String> entry : event.entrySet()) {
             logger.log(entry.getKey() + " " + entry.getValue());
         }
-        return null;
+        return 1000;
     }
 }
