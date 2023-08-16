@@ -9,11 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class AddPetHandler implements RequestHandler<AddPetModel, Void> {
-    private String dbName = System.getenv("RDS_DB_NAME");
-    private String userName = System.getenv("RDS_USERNAME");
-    private String password = System.getenv("RDS_PASSWORD");
-    private String hostname = System.getenv("RDS_HOSTNAME");
-    private String port = System.getenv("RDS_PORT");
 
     @Override
     public Void handleRequest(AddPetModel event, Context context) {
@@ -27,7 +22,10 @@ public class AddPetHandler implements RequestHandler<AddPetModel, Void> {
                     + "OwnerName, "
                     + "Species, "
                     + "Age) "
-                    + "VALUES ('Travis', 'Maurizio', 'Cockatiel', 3)";
+                    + "VALUES ('" + event.getName() + "', '"
+                    + event.getName() + "', '"
+                    + event.getSpecies() + "', +"
+                    + event.getAge() + ")";
             stmt.executeUpdate(update);
             log(context, "table updated");
         } catch (Exception e) {
@@ -43,13 +41,13 @@ public class AddPetHandler implements RequestHandler<AddPetModel, Void> {
         if (event.getAge() == null) {
             throw new ValidationException("Age = null");
         }
-        if (event.getOwnerName()== null) {
+        if (event.getOwnerName() == null) {
             throw new ValidationException("Owner = null");
         }
-        if (event.getSpecies()== null) {
+        if (event.getSpecies() == null) {
             throw new ValidationException("Species = null");
         }
-        if (event.getName()== null) {
+        if (event.getName() == null) {
             throw new ValidationException("Name = null");
         }
     }
@@ -59,8 +57,8 @@ public class AddPetHandler implements RequestHandler<AddPetModel, Void> {
     }
 
     private Statement getStatement() throws SQLException {
-        String jdbcUrl = "jdbc:mysql://" + hostname + ":" + port + "/" + dbName;
-        Connection conn = DriverManager.getConnection(jdbcUrl, userName, password);
+        String jdbcUrl = "jdbc:mysql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/" + System.getenv("RDS_DB_NAME");
+        Connection conn = DriverManager.getConnection(jdbcUrl, System.getenv("RDS_USERNAME"), System.getenv("RDS_PASSWORD"));
         Statement stmt = conn.createStatement();
         return stmt;
     }
