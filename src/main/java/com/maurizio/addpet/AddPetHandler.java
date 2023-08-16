@@ -9,29 +9,33 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class AddPetHandler implements RequestHandler<AddPetModel, Void> {
+    private Connection connection = null;
 
     @Override
     public Void handleRequest(AddPetModel event, Context context) {
         log(context, "RECEIVED: " + event.toString());
         validateInput(event);
         try {
-            Statement stmt = getStatement();
+            Statement stmt = connectToDb();
             log(context, "Connections successful");
-            String update = "INSERT INTO PETS ("
-                    + "PetName, "
-                    + "OwnerName, "
-                    + "Species, "
-                    + "Age) "
-                    + "VALUES ('" + event.getName() + "', '"
-                    + event.getName() + "', '"
-                    + event.getSpecies() + "', +"
-                    + event.getAge() + ")";
-            stmt.executeUpdate(update);
-            log(context, "table updated");
+            stmt.executeUpdate(createSql(event));
+            log(context, "Table updated");
         } catch (Exception e) {
             log(context, "ERROR! " + e.getMessage());
         }
         return null;
+    }
+
+    private static String createSql(AddPetModel event) {
+        return "INSERT INTO PETS ("
+                + "PetName, "
+                + "OwnerName, "
+                + "Species, "
+                + "Age) "
+                + "VALUES ('" + event.getName() + "', '"
+                + event.getName() + "', '"
+                + event.getSpecies() + "', +"
+                + event.getAge() + ")";
     }
 
     private void validateInput(AddPetModel event) {
@@ -56,11 +60,12 @@ public class AddPetHandler implements RequestHandler<AddPetModel, Void> {
         context.getLogger().log(message);
     }
 
-    private Statement getStatement() throws SQLException {
+    private Statement connectToDb() throws SQLException {
         String jdbcUrl = "jdbc:mysql://" + System.getenv("RDS_HOSTNAME") + ":" + System.getenv("RDS_PORT") + "/" + System.getenv("RDS_DB_NAME");
-        Connection conn = DriverManager.getConnection(jdbcUrl, System.getenv("RDS_USERNAME"), System.getenv("RDS_PASSWORD"));
-        Statement stmt = conn.createStatement();
-        return stmt;
+        if (connection != null) {
+            connection = DriverManager.getConnection(jdbcUrl, System.getenv("RDS_USERNAME"), System.getenv("RDS_PASSWORD"));
+        }
+        return connection.createStatement();
     }
 
     class ValidationException extends RuntimeException {
